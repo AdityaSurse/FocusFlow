@@ -1,0 +1,19 @@
+{
+  "collections": [
+    {
+      "name": "syncProfiles",
+      "fields": [
+        { "name": "createdAt", "type": "timestamp" },
+        { "name": "settings", "type": "map" },
+        { "name": "sessions", "type": "array" }
+      ],
+      "rules": [
+        {
+          "access": ["read", "write"],
+          "condition": "true",
+          "description": "Allow read/write if they know the document ID (sync code)"
+        }
+      ]
+    }
+  ]
+}

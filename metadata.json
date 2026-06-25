@@ -1,0 +1,6 @@
+{
+  "name": "FocusFlow",
+  "description": "A Pomodoro timer application with focus, short break, and long break modes, a settings panel, and session statistics, featuring a Clean Minimalism design aesthetic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
