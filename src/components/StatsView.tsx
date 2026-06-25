@@ -58,6 +58,77 @@ export function StatsView() {
     };
   }, [sessions, last7Days]);
 
+  const timeDistributionData = useMemo(() => {
+    let focus = 0, short = 0, long = 0;
+    sessions.forEach(s => {
+      if (s.type === 'focus') focus += s.duration;
+      else if (s.type === 'shortBreak') short += s.duration;
+      else if (s.type === 'longBreak') long += s.duration;
+    });
+
+    return {
+      labels: ['Focus', 'Short Break', 'Long Break'],
+      datasets: [{
+        data: [focus / 60, short / 60, long / 60],
+        backgroundColor: [
+          'rgba(79, 70, 229, 0.8)',
+          'rgba(13, 148, 136, 0.8)',
+          'rgba(217, 119, 6, 0.8)'
+        ],
+        borderColor: [
+          'rgb(79, 70, 229)',
+          'rgb(13, 148, 136)',
+          'rgb(217, 119, 6)'
+        ],
+        borderWidth: 1,
+      }]
+    };
+  }, [sessions]);
+
+  const hourlyData = useMemo(() => {
+    const hours = Array(24).fill(0);
+    sessions.forEach(s => {
+      if (s.type === 'focus') {
+        const hour = new Date(s.timestamp).getHours();
+        hours[hour] += s.duration / 60;
+      }
+    });
+
+    return {
+      labels: Array.from({length: 24}, (_, i) => `${i.toString().padStart(2, '0')}:00`),
+      datasets: [{
+        label: 'Focus Time (min)',
+        data: hours,
+        backgroundColor: 'rgba(99, 102, 241, 0.6)',
+        borderColor: 'rgb(99, 102, 241)',
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    };
+  }, [sessions]);
+
+  const doughnutOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { 
+        position: 'bottom' as const,
+        labels: { color: '#cbd5e1', padding: 20 }
+      },
+      tooltip: {
+        backgroundColor: '#141418',
+        titleColor: '#f1f5f9',
+        bodyColor: '#cbd5e1',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8,
+      }
+    },
+    cutout: '75%',
+    borderColor: 'transparent',
+  };
+
   const lineOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -126,14 +197,14 @@ export function StatsView() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-[#141418] border border-white/5 rounded-2xl p-6 h-[400px] flex flex-col">
-            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Weekly Activity (Bar)</h3>
+            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Weekly Activity</h3>
             <div className="flex-1 relative">
               <Bar data={chartData} options={lineOptions} />
             </div>
           </div>
 
           <div className="bg-[#141418] border border-white/5 rounded-2xl p-6 h-[400px] flex flex-col">
-            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Focus Trend (Line)</h3>
+            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Focus Trend</h3>
             <div className="flex-1 relative">
               <Line 
                 data={{
@@ -148,6 +219,20 @@ export function StatsView() {
                 }} 
                 options={lineOptions} 
               />
+            </div>
+          </div>
+
+          <div className="bg-[#141418] border border-white/5 rounded-2xl p-6 h-[400px] flex flex-col">
+            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Time Distribution</h3>
+            <div className="flex-1 relative">
+              <Doughnut data={timeDistributionData} options={doughnutOptions} />
+            </div>
+          </div>
+
+          <div className="bg-[#141418] border border-white/5 rounded-2xl p-6 h-[400px] flex flex-col">
+            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Productivity by Hour</h3>
+            <div className="flex-1 relative">
+              <Bar data={hourlyData} options={lineOptions} />
             </div>
           </div>
         </div>
