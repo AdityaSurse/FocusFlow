@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "focus-flow-one-lilac.vercel",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "focus-flow-one-lilac.vercel",
+  "start_url": "/",
+  "theme_color": "#ffffff"
+}
